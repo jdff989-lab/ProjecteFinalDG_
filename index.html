@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Bulk Trainer</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <h1>AI Bulk Trainer</h1>
+
+    <input type="text" id="nombre" placeholder="Nombre">
+    <input type="number" id="peso" placeholder="Peso en kg">
+    <input type="number" id="altura" placeholder="Altura en cm">
+
+    <select id="objetivo">
+      <option value="subir peso">Subir peso</option>
+      <option value="bajar peso">Bajar peso</option>
+      <option value="mantener">Mantener</option>
+    </select>
+
+    <select id="nivel">
+      <option value="principiante">Principiante</option>
+      <option value="intermedio">Intermedio</option>
+    </select>
+
+    <input type="number" id="dias" placeholder="Días de entrenamiento">
+
+    <button onclick="generarPlan()">Generar plan</button>
+
+    <div id="resultado"></div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

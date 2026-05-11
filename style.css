@@ -1,0 +1,28 @@
+body {
+  font-family: Arial, sans-serif;
+  background: #f4f4f4;
+  margin: 0;
+  padding: 20px;
+}
+
+.container {
+  max-width: 600px;
+  background: white;
+  margin: auto;
+  padding: 20px;
+  border-radius: 10px;
+}
+
+input, select, button {
+  width: 100%;
+  margin-top: 10px;
+  padding: 10px;
+}
+
+button {
+  cursor: pointer;
+}
+
+#resultado {
+  margin-top: 20px;
+}
