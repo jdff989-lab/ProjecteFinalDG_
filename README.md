@@ -1,0 +1,1 @@
+Eixo es el fitxer readme per mes informacio del projecte
