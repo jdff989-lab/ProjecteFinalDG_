@@ -10,7 +10,7 @@
   <div class="container">
     <div class="card">
       <h1>AI Bulk Trainer</h1>
-      <p class="subtitle">Genera un plan básico de entrenamiento, dieta y calorías orientativas</p>
+      <p class="subtitle">Genera un plan de entrenamiento, dieta y calorías orientativas con IA</p>
 
       <div class="form-grid">
         <div class="input-group">
@@ -65,14 +65,17 @@
       </div>
 
       <div class="buttons">
-        <button id="generarBtn">Generar plan</button>
+        <button id="generarBtn">Generar plan con IA</button>
         <button id="limpiarBtn" class="secondary">Limpiar</button>
+        <button id="pdfBtn" class="secondary">Descargar PDF</button>
       </div>
 
+      <div id="estado" class="estado"></div>
       <div id="resultado" class="resultado"></div>
     </div>
   </div>
 
+  <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
   <script src="script.js"></script>
 </body>
 </html>

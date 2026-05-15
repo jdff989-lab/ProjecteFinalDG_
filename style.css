@@ -223,3 +223,25 @@ li {
     padding: 20px;
   }
 }
+
+.estado {
+  margin-top: 18px;
+  font-weight: bold;
+  color: #334155;
+}
+
+.estado.cargando {
+  color: #1d4ed8;
+}
+
+.estado.ok {
+  color: #166534;
+}
+
+.estado.error {
+  color: #b91c1c;
+}
+
+.buttons {
+  flex-wrap: wrap;
+}
