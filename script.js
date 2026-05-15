@@ -1,11 +1,16 @@
 const botonGenerar = document.getElementById("generarBtn");
 const botonLimpiar = document.getElementById("limpiarBtn");
+const botonPDF = document.getElementById("pdfBtn");
 const resultado = document.getElementById("resultado");
+const estado = document.getElementById("estado");
+
+let ultimoPlan = null;
 
 botonGenerar.addEventListener("click", generarPlan);
 botonLimpiar.addEventListener("click", limpiarFormulario);
+botonPDF.addEventListener("click", descargarPDF);
 
-function generarPlan() {
+async function generarPlan() {
   const nombre = document.getElementById("nombre").value.trim();
   const edad = Number(document.getElementById("edad").value);
   const peso = Number(document.getElementById("peso").value);
@@ -29,24 +34,78 @@ function generarPlan() {
   const mantenimiento = calcularCaloriasMantenimiento(metabolismoBasal, dias);
   const objetivoCalorico = calcularObjetivoCalorico(mantenimiento, objetivo);
 
-  const dieta = generarDieta(objetivo);
-  const rutina = generarRutina(dias, nivel);
-  const consejos = generarConsejos(objetivo, nivel);
+  estado.className = "estado cargando";
+  estado.textContent = "Generando plan con IA...";
 
+  try {
+    const respuesta = await fetch("/api/plan", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        nombre,
+        edad,
+        peso,
+        altura,
+        sexo,
+        objetivo,
+        nivel,
+        dias
+      })
+    });
+
+    const datos = await respuesta.json();
+
+    if (!respuesta.ok) {
+      throw new Error(datos.error || "No se pudo generar el plan.");
+    }
+
+    ultimoPlan = {
+      nombre,
+      edad,
+      peso,
+      altura,
+      sexo,
+      objetivo,
+      nivel,
+      dias,
+      metabolismoBasal,
+      mantenimiento,
+      objetivoCalorico,
+      resumen: datos.resumen,
+      planNutricional: datos.planNutricional,
+      planEntrenamiento: datos.planEntrenamiento,
+      recomendaciones: datos.recomendaciones
+    };
+
+    pintarResultado(ultimoPlan);
+
+    estado.className = "estado ok";
+    estado.textContent = "Plan generado correctamente.";
+  } catch (error) {
+    console.error(error);
+    mostrarError(error.message || "Ha ocurrido un error.");
+    estado.className = "estado error";
+    estado.textContent = "Error al generar el plan con IA.";
+  }
+}
+
+function pintarResultado(plan) {
   resultado.style.display = "block";
   resultado.innerHTML = `
     <div class="resultado-header">
-      <h2>Plan personalizado ${nombre ? "para " + nombre : ""}</h2>
-      <p>Resumen orientativo generado según tus datos físicos y tu objetivo.</p>
+      <h2>Plan personalizado ${plan.nombre ? "para " + plan.nombre : ""}</h2>
+      <p>${plan.resumen || "Plan generado con IA según los datos introducidos."}</p>
 
       <div class="resumen-datos">
-        <div class="dato"><strong>Edad:</strong> ${edad} años</div>
-        <div class="dato"><strong>Peso:</strong> ${peso} kg</div>
-        <div class="dato"><strong>Altura:</strong> ${altura} cm</div>
-        <div class="dato"><strong>Sexo:</strong> ${capitalizar(sexo)}</div>
-        <div class="dato"><strong>Objetivo:</strong> ${capitalizar(objetivo)}</div>
-        <div class="dato"><strong>Nivel:</strong> ${capitalizar(nivel)}</div>
-        <div class="dato"><strong>Días de entrenamiento:</strong> ${dias}</div>
+        <div class="dato"><strong>Edad:</strong> ${plan.edad} años</div>
+        <div class="dato"><strong>Peso:</strong> ${plan.peso} kg</div>
+        <div class="dato"><strong>Altura:</strong> ${plan.altura} cm</div>
+        <div class="dato"><strong>Sexo:</strong> ${capitalizar(plan.sexo)}</div>
+        <div class="dato"><strong>Objetivo:</strong> ${capitalizar(plan.objetivo)}</div>
+        <div class="dato"><strong>Nivel:</strong> ${capitalizar(plan.nivel)}</div>
+        <div class="dato"><strong>Días de entrenamiento:</strong> ${plan.dias}</div>
       </div>
     </div>
 
@@ -57,15 +116,15 @@ function generarPlan() {
       <div class="calorias-box">
         <div class="caloria-item">
           <span>Metabolismo basal</span>
-          <strong>${metabolismoBasal} kcal</strong>
+          <strong>${plan.metabolismoBasal} kcal</strong>
         </div>
         <div class="caloria-item">
           <span>Mantenimiento</span>
-          <strong>${mantenimiento} kcal</strong>
+          <strong>${plan.mantenimiento} kcal</strong>
         </div>
         <div class="caloria-item">
           <span>Objetivo diario</span>
-          <strong>${objetivoCalorico} kcal</strong>
+          <strong>${plan.objetivoCalorico} kcal</strong>
         </div>
       </div>
     </div>
@@ -74,25 +133,94 @@ function generarPlan() {
       <div class="bloque">
         <h3>🥗 Plan nutricional</h3>
         <ul>
-          ${dieta.map(item => `<li>${item}</li>`).join("")}
+          ${plan.planNutricional.map(item => `<li>${item}</li>`).join("")}
         </ul>
       </div>
 
       <div class="bloque">
         <h3>🏋️ Plan de entrenamiento</h3>
         <ul>
-          ${rutina.map(item => `<li>${item}</li>`).join("")}
+          ${plan.planEntrenamiento.map(item => `<li>${item}</li>`).join("")}
         </ul>
       </div>
 
       <div class="bloque full">
         <h3>💡 Recomendaciones</h3>
         <ul>
-          ${consejos.map(item => `<li>${item}</li>`).join("")}
+          ${plan.recomendaciones.map(item => `<li>${item}</li>`).join("")}
         </ul>
       </div>
     </div>
   `;
+}
+
+function descargarPDF() {
+  if (!ultimoPlan) {
+    alert("Primero genera un plan antes de descargar el PDF.");
+    return;
+  }
+
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF();
+
+  const lineas = [];
+  lineas.push("AI Bulk Trainer");
+  lineas.push("");
+  lineas.push(`Plan personalizado ${ultimoPlan.nombre ? "para " + ultimoPlan.nombre : ""}`);
+  lineas.push("");
+  lineas.push(`Edad: ${ultimoPlan.edad} años`);
+  lineas.push(`Peso: ${ultimoPlan.peso} kg`);
+  lineas.push(`Altura: ${ultimoPlan.altura} cm`);
+  lineas.push(`Sexo: ${capitalizar(ultimoPlan.sexo)}`);
+  lineas.push(`Objetivo: ${capitalizar(ultimoPlan.objetivo)}`);
+  lineas.push(`Nivel: ${capitalizar(ultimoPlan.nivel)}`);
+  lineas.push(`Días de entrenamiento: ${ultimoPlan.dias}`);
+  lineas.push("");
+  lineas.push("CALORÍAS ORIENTATIVAS");
+  lineas.push(`Metabolismo basal: ${ultimoPlan.metabolismoBasal} kcal`);
+  lineas.push(`Mantenimiento: ${ultimoPlan.mantenimiento} kcal`);
+  lineas.push(`Objetivo diario: ${ultimoPlan.objetivoCalorico} kcal`);
+  lineas.push("");
+  lineas.push("PLAN NUTRICIONAL");
+  ultimoPlan.planNutricional.forEach((item, i) => {
+    lineas.push(`${i + 1}. ${item}`);
+  });
+  lineas.push("");
+  lineas.push("PLAN DE ENTRENAMIENTO");
+  ultimoPlan.planEntrenamiento.forEach((item, i) => {
+    lineas.push(`${i + 1}. ${item}`);
+  });
+  lineas.push("");
+  lineas.push("RECOMENDACIONES");
+  ultimoPlan.recomendaciones.forEach((item, i) => {
+    lineas.push(`${i + 1}. ${item}`);
+  });
+
+  let y = 15;
+  const margen = 15;
+  const ancho = 180;
+
+  doc.setFont("helvetica", "normal");
+  doc.setFontSize(12);
+
+  lineas.forEach((linea) => {
+    const trozos = doc.splitTextToSize(linea, ancho);
+
+    trozos.forEach((trozo) => {
+      if (y > 280) {
+        doc.addPage();
+        y = 15;
+      }
+      doc.text(trozo, margen, y);
+      y += 7;
+    });
+  });
+
+  const nombreArchivo = ultimoPlan.nombre
+    ? `plan_${ultimoPlan.nombre}.pdf`
+    : "plan_ai_bulk_trainer.pdf";
+
+  doc.save(nombreArchivo);
 }
 
 function calcularMB(peso, altura, edad, sexo) {
@@ -132,102 +260,6 @@ function calcularObjetivoCalorico(mantenimiento, objetivo) {
   return mantenimiento;
 }
 
-function generarDieta(objetivo) {
-  if (objetivo === "subir peso") {
-    return [
-      "Desayuno abundante con avena, fruta, huevos o yogur proteico.",
-      "Comida principal con arroz, pasta o patata y una fuente potente de proteína.",
-      "Añade 1 o 2 snacks altos en calorías: frutos secos, batidos, crema de cacahuete.",
-      "Cena completa con carbohidrato, proteína y grasas saludables.",
-      "Mantén una ingesta constante durante el día para llegar a tus calorías."
-    ];
-  } else if (objetivo === "bajar peso") {
-    return [
-      "Prioriza alimentos saciantes: verduras, fruta, legumbres y proteína magra.",
-      "Reduce ultraprocesados, bebidas azucaradas y picoteo innecesario.",
-      "Distribuye bien las comidas para llegar con menos hambre al final del día.",
-      "Mantén una buena cantidad de proteína para proteger masa muscular.",
-      "Controla porciones sin hacer una dieta extrema."
-    ];
-  } else {
-    return [
-      "Mantén una alimentación equilibrada con proteína, carbohidratos y grasas saludables.",
-      "Usa comidas completas y sostenibles para mantener tu peso actual.",
-      "Incluye verduras y fruta a diario.",
-      "Evita cambios bruscos en calorías.",
-      "Controla el progreso cada semana para ajustar si hace falta."
-    ];
-  }
-}
-
-function generarRutina(dias, nivel) {
-  if (nivel === "principiante") {
-    if (dias <= 2) {
-      return [
-        "2 días full body con ejercicios básicos.",
-        "Sentadilla, press banca, remo y trabajo de core.",
-        "1 o 2 series suaves de cardio al final."
-      ];
-    } else if (dias <= 4) {
-      return [
-        "Rutina torso/pierna o full body alternada.",
-        "Ejercicios principales: sentadilla, peso muerto rumano, press, jalón y remo.",
-        "Prioriza técnica antes que peso."
-      ];
-    } else {
-      return [
-        "División sencilla por grupos musculares.",
-        "Combina fuerza básica y algo de hipertrofia.",
-        "No metas demasiado volumen; mejor constancia."
-      ];
-    }
-  } else {
-    if (dias <= 3) {
-      return [
-        "Rutina full body o torso/pierna de 3 días.",
-        "Trabajo de fuerza en básicos + accesorios.",
-        "Controla progresión de cargas cada semana."
-      ];
-    } else if (dias <= 5) {
-      return [
-        "División por grupos musculares o push/pull/legs adaptado.",
-        "Añade series efectivas para hipertrofia.",
-        "Combina ejercicios compuestos y analíticos."
-      ];
-    } else {
-      return [
-        "Rutina avanzada dividida con frecuencia alta.",
-        "Control de volumen, intensidad y recuperación.",
-        "Evita sobreentrenar: más no siempre es mejor."
-      ];
-    }
-  }
-}
-
-function generarConsejos(objetivo, nivel) {
-  const consejosBase = [
-    "Duerme entre 7 y 8 horas al día.",
-    "Sé constante al menos 4 semanas antes de juzgar resultados.",
-    "Haz seguimiento de peso, energía y rendimiento."
-  ];
-
-  if (objetivo === "subir peso") {
-    consejosBase.push("Si no subes de peso en 2 semanas, aumenta 150-200 kcal.");
-  } else if (objetivo === "bajar peso") {
-    consejosBase.push("Si no bajas progreso, revisa porciones y actividad diaria.");
-  } else {
-    consejosBase.push("Mantén hábitos sostenibles en vez de buscar cambios extremos.");
-  }
-
-  if (nivel === "principiante") {
-    consejosBase.push("Aprende bien la técnica antes de obsesionarte con levantar más.");
-  } else {
-    consejosBase.push("Programa la progresión y no entrenes siempre al límite.");
-  }
-
-  return consejosBase;
-}
-
 function limpiarFormulario() {
   document.getElementById("nombre").value = "";
   document.getElementById("edad").value = "";
@@ -238,6 +270,9 @@ function limpiarFormulario() {
   document.getElementById("nivel").value = "principiante";
   document.getElementById("dias").value = "";
 
+  ultimoPlan = null;
+  estado.textContent = "";
+  estado.className = "estado";
   resultado.style.display = "none";
   resultado.innerHTML = "";
 }
