@@ -5,86 +5,221 @@
 body {
   margin: 0;
   font-family: Arial, sans-serif;
-  background: linear-gradient(135deg, #0f172a, #1e293b);
+  background: linear-gradient(135deg, #0f172a, #1e293b, #334155);
+  min-height: 100vh;
   color: #111827;
-  padding: 30px 15px;
 }
 
 .container {
-  max-width: 700px;
+  width: 100%;
+  padding: 30px 15px;
+}
+
+.card {
+  max-width: 950px;
   margin: 0 auto;
-  background: #ffffff;
-  padding: 25px;
-  border-radius: 16px;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+  background: rgba(255, 255, 255, 0.98);
+  border-radius: 20px;
+  padding: 30px;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.25);
 }
 
 h1 {
-  margin-top: 0;
-  margin-bottom: 8px;
+  margin: 0;
   text-align: center;
+  font-size: 2rem;
+  color: #0f172a;
 }
 
 .subtitle {
   text-align: center;
-  color: #6b7280;
-  margin-bottom: 25px;
+  color: #64748b;
+  margin-top: 10px;
+  margin-bottom: 30px;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 18px;
+}
+
+.input-group {
+  display: flex;
+  flex-direction: column;
 }
 
 label {
-  display: block;
-  margin-top: 14px;
-  margin-bottom: 6px;
   font-weight: bold;
+  margin-bottom: 8px;
+  color: #1e293b;
 }
 
 input,
 select,
 button {
-  width: 100%;
-  padding: 12px;
-  border-radius: 10px;
-  border: 1px solid #d1d5db;
   font-size: 16px;
+  border-radius: 12px;
+}
+
+input,
+select {
+  padding: 12px 14px;
+  border: 1px solid #cbd5e1;
+  background: #f8fafc;
+  outline: none;
+  transition: 0.2s ease;
+}
+
+input:focus,
+select:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.12);
+}
+
+.buttons {
+  display: flex;
+  gap: 12px;
+  margin-top: 25px;
 }
 
 button {
-  margin-top: 20px;
-  background: #2563eb;
-  color: white;
+  flex: 1;
+  padding: 14px;
   border: none;
-  font-weight: bold;
   cursor: pointer;
+  font-weight: bold;
   transition: 0.2s ease;
 }
 
 button:hover {
-  background: #1d4ed8;
+  transform: translateY(-1px);
+}
+
+#generarBtn {
+  background: linear-gradient(135deg, #2563eb, #1d4ed8);
+  color: white;
+}
+
+.secondary {
+  background: #e2e8f0;
+  color: #0f172a;
 }
 
 .resultado {
-  margin-top: 25px;
-  padding: 20px;
-  border-radius: 12px;
-  background: #f8fafc;
-  border: 1px solid #e5e7eb;
   display: none;
+  margin-top: 30px;
+  padding: 25px;
+  border-radius: 18px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
 }
 
-.resultado h2,
-.resultado h3 {
-  margin-top: 0;
+.resultado-header {
+  margin-bottom: 20px;
+}
+
+.resultado-header h2 {
+  margin: 0 0 10px 0;
+  color: #0f172a;
+}
+
+.resumen-datos {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+  margin-top: 15px;
+}
+
+.dato {
+  background: white;
+  padding: 12px;
+  border-radius: 12px;
+  border: 1px solid #e5e7eb;
+}
+
+.cards-resultados {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+  margin-top: 20px;
 }
 
 .bloque {
-  margin-top: 18px;
-  padding: 15px;
   background: white;
-  border-radius: 10px;
-  border-left: 5px solid #2563eb;
+  border-radius: 14px;
+  padding: 18px;
+  border-left: 6px solid #2563eb;
+  box-shadow: 0 6px 18px rgba(15, 23, 42, 0.06);
+}
+
+.bloque h3 {
+  margin-top: 0;
+  color: #0f172a;
+}
+
+.bloque.full {
+  grid-column: 1 / -1;
+}
+
+.calorias-box {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.caloria-item {
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  border-radius: 12px;
+  padding: 12px;
+  text-align: center;
+}
+
+.caloria-item span {
+  display: block;
+  font-size: 0.9rem;
+  color: #475569;
+  margin-bottom: 5px;
+}
+
+.caloria-item strong {
+  font-size: 1.1rem;
+  color: #1d4ed8;
 }
 
 .error {
   color: #b91c1c;
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  padding: 12px;
+  border-radius: 10px;
   font-weight: bold;
+}
+
+ul {
+  margin: 0;
+  padding-left: 18px;
+}
+
+li {
+  margin-bottom: 8px;
+}
+
+@media (max-width: 768px) {
+  .form-grid,
+  .cards-resultados,
+  .resumen-datos,
+  .calorias-box {
+    grid-template-columns: 1fr;
+  }
+
+  .buttons {
+    flex-direction: column;
+  }
+
+  .card {
+    padding: 20px;
+  }
 }
