@@ -27,33 +27,68 @@ app.post("/api/plan", async (req, res) => {
       return res.status(400).json({ error: "Faltan datos obligatorios." });
     }
 
-    const prompt = `
-Eres un entrenador personal y asesor nutricional.
+const prompt = `
+Actúa como un entrenador personal profesional y nutricionista deportivo.
 
-Genera un plan claro, realista y bien organizado en español para este usuario:
+Genera un plan MUY DETALLADO y personalizado para este usuario.
 
-Nombre: ${nombre || "Usuario"}
-Edad: ${edad}
-Peso: ${peso} kg
-Altura: ${altura} cm
-Sexo: ${sexo}
-Objetivo: ${objetivo}
-Nivel: ${nivel}
-Días de entrenamiento por semana: ${dias}
+DATOS DEL USUARIO:
+- Nombre: ${nombre || "Usuario"}
+- Edad: ${edad}
+- Peso: ${peso} kg
+- Altura: ${altura} cm
+- Sexo: ${sexo}
+- Objetivo: ${objetivo}
+- Nivel: ${nivel}
+- Días de entrenamiento por semana: ${dias}
+
+REQUISITOS:
+
+1. El plan nutricional debe incluir:
+- Desayuno
+- Media mañana
+- Comida
+- Merienda
+- Cena
+
+Cada comida debe tener alimentos concretos y cantidades aproximadas.
+
+2. El plan de entrenamiento debe tener EXACTAMENTE ${dias} días.
+
+Cada día debe incluir:
+- grupo muscular
+- ejercicios concretos
+- series
+- repeticiones
+
+3. Las recomendaciones deben ser específicas, no genéricas.
 
 Devuelve SOLO JSON válido con esta estructura exacta:
+
 {
-  "resumen": "texto breve",
-  "planNutricional": ["punto 1", "punto 2", "punto 3", "punto 4", "punto 5"],
-  "planEntrenamiento": ["punto 1", "punto 2", "punto 3", "punto 4", "punto 5"],
-  "recomendaciones": ["punto 1", "punto 2", "punto 3", "punto 4", "punto 5"]
+  "resumen": "Resumen personalizado del plan",
+  "planNutricional": [
+    {
+      "comida": "Desayuno",
+      "detalle": "Ejemplo detallado con cantidades"
+    }
+  ],
+  "planEntrenamiento": [
+    {
+      "dia": "Día 1",
+      "detalle": "Rutina detallada con ejercicios, series y repeticiones"
+    }
+  ],
+  "recomendaciones": [
+    "Consejo específico 1",
+    "Consejo específico 2",
+    "Consejo específico 3",
+    "Consejo específico 4",
+    "Consejo específico 5"
+  ]
 }
 
-Reglas:
-- Sé práctico, concreto y realista.
-- No pongas texto fuera del JSON.
-- No incluyas advertencias médicas largas.
-- El plan debe ser fácil de entender para un estudiante.
+No uses markdown. No escribas nada fuera del JSON.
 `;
 
     const response = await client.responses.create({

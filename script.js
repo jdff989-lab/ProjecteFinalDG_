@@ -132,16 +132,27 @@ function pintarResultado(plan) {
     <div class="cards-resultados">
       <div class="bloque">
         <h3>🥗 Plan nutricional</h3>
-        <ul>
-          ${plan.planNutricional.map(item => `<li>${item}</li>`).join("")}
-        </ul>
+<h3>🥗 Plan nutricional</h3>
+<ul>
+  ${plan.planNutricional.map(item => `
+    <li>
+      <strong>${item.comida}:</strong><br>
+      ${item.detalle}
+    </li>
+  `).join("")}
+</ul>
       </div>
 
       <div class="bloque">
         <h3>🏋️ Plan de entrenamiento</h3>
-        <ul>
-          ${plan.planEntrenamiento.map(item => `<li>${item}</li>`).join("")}
-        </ul>
+<ul>
+  ${plan.planEntrenamiento.map(item => `
+    <li>
+      <strong>${item.dia}:</strong><br>
+      ${item.detalle}
+    </li>
+  `).join("")}
+</ul>
       </div>
 
       <div class="bloque full">
