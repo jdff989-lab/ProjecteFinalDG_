@@ -131,8 +131,7 @@ function pintarResultado(plan) {
 
     <div class="cards-resultados">
       <div class="bloque">
-        <h3>🥗 Plan nutricional</h3>
-<h3>🥗 Plan nutricional</h3>
+<h3>🥗 Plan nutricional diario</h3>
 <ul>
   ${plan.planNutricional.map(item => `
     <li>
@@ -144,7 +143,7 @@ function pintarResultado(plan) {
       </div>
 
       <div class="bloque">
-        <h3>🏋️ Plan de entrenamiento</h3>
+        <h3>🏋️ Rutina semanal</h3>
 <ul>
   ${plan.planEntrenamiento.map(item => `
     <li>

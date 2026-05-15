@@ -140,17 +140,20 @@ button:hover {
 
 .cards-resultados {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 16px;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
   margin-top: 20px;
+  align-items: start;
 }
 
 .bloque {
   background: white;
-  border-radius: 14px;
-  padding: 18px;
+  border-radius: 18px;
+  padding: 20px;
   border-left: 6px solid #2563eb;
-  box-shadow: 0 6px 18px rgba(15, 23, 42, 0.06);
+  box-shadow: 0 10px 25px rgba(15, 23, 42, 0.08);
+  max-height: 620px;
+  overflow-y: auto;
 }
 
 .bloque h3 {
@@ -160,6 +163,7 @@ button:hover {
 
 .bloque.full {
   grid-column: 1 / -1;
+  max-height: none;
 }
 
 .calorias-box {
@@ -244,4 +248,73 @@ li {
 
 .buttons {
   flex-wrap: wrap;
+}
+
+.bloque ul {
+  list-style: none;
+  padding-left: 0;
+}
+
+.bloque li {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+  padding: 14px;
+  margin-bottom: 12px;
+  line-height: 1.45;
+}
+
+.bloque li strong {
+  color: #1d4ed8;
+  font-size: 1.05rem;
+}
+
+.bloque h3 {
+  position: sticky;
+  top: 0;
+  background: white;
+  padding-bottom: 12px;
+  z-index: 2;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.resultado {
+  background: #f1f5f9;
+}
+
+.resultado-header {
+  background: white;
+  padding: 20px;
+  border-radius: 18px;
+  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.06);
+}
+
+.calorias-box {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 15px;
+}
+
+.caloria-item {
+  background: linear-gradient(135deg, #eff6ff, #dbeafe);
+  border: 1px solid #93c5fd;
+  border-radius: 16px;
+  padding: 16px;
+}
+
+.caloria-item strong {
+  font-size: 1.25rem;
+}
+
+.bloque::-webkit-scrollbar {
+  width: 8px;
+}
+
+.bloque::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 20px;
+}
+
+.bloque::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
 }
